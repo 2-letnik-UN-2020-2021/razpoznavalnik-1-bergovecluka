@@ -211,26 +211,6 @@ class Recognizer(private val scanner: Scanner) {
         }
     }
 
-    fun recognizeE() {
-        recognizeT()
-        recognizeE_()
-    }
-
-    fun recognizeE_() {
-        val lookahead = last?.value
-        when (lookahead) {
-            PLUS -> {
-                recognizeTerminal(PLUS)
-                recognizeT()
-                recognizeE_()
-            }
-            MINUS -> {
-                recognizeTerminal(MINUS)
-                recognizeT()
-                recognizeE_()
-            }
-        }
-    }
     /*
     E ::= T EE;
     EE ::= + T EE | - T EE | epsilon;
@@ -242,33 +222,54 @@ class Recognizer(private val scanner: Scanner) {
     F ::= ( E ) | float | variable;
     */
 
-    fun recognizeT() {
-        recognizeX()
-        recognizeT_()
+    fun recognizeE() {
+        recognizeT()
+        recognizeEE()
     }
 
-    fun recognizeT_() {
+    fun recognizeEE() {
+        val lookahead = last?.value
+        when (lookahead) {
+            PLUS -> {
+                recognizeTerminal(PLUS)
+                recognizeT()
+                recognizeEE()
+            }
+            MINUS -> {
+                recognizeTerminal(MINUS)
+                recognizeT()
+                recognizeEE()
+            }
+        }
+    }
+
+    fun recognizeT() {
+        recognizeX()
+        recognizeTT()
+    }
+
+    fun recognizeTT() {
         val lookahead = last?.value
         when (lookahead) {
             TIMES -> {
                 recognizeTerminal(TIMES)
                 recognizeX()
-                recognizeT_()
+                recognizeTT()
             }
             DIVIDE -> {
                 recognizeTerminal(DIVIDE)
                 recognizeX()
-                recognizeT_()
+                recognizeTT()
             }
         }
     }
 
     fun recognizeX() {
         recognizeY()
-        recognizeX_()
+        recognizeXX()
     }
 
-    fun recognizeX_() {
+    fun recognizeXX() {
         val lookahead = last?.value
         when (lookahead) {
             POW -> {
@@ -329,4 +330,5 @@ fun main(args: Array<String>) {
         return
     }
     print("accept")
+
 }
